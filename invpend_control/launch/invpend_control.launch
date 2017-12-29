@@ -6,7 +6,7 @@
   <!-- load the controllers -->
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
 	output="screen" ns="/invpend" args="joint_state_controller
-					  joint1_position_controller
+					  joint1_velocity_controller
 					  joint2_position_controller"/>
 
   <!-- convert joint states to TF transforms for rviz, etc -->
