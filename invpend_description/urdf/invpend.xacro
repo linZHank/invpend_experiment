@@ -28,7 +28,7 @@
   <!-- Slider Link -->
   <link name="slidebar">
     <visual>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <origin xyz="0 0 2" rpy="0 0 0"/>
       <geometry>
 	<box size="30 0.05 0.05"/>
       </geometry>
@@ -36,8 +36,8 @@
     </visual>
 
     <inertial>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <mass value="0"/>
+      <origin xyz="0 0 2" rpy="0 0 0"/>
+      <mass value="0.001"/>
       <inertia
 	  ixx="1.0" ixy="0.0" ixz="0.0"
 	  iyy="1.0" iyz="0.0"
@@ -48,10 +48,10 @@
   <joint name="slider_to_cart" type="prismatic">
     <parent link="slidebar"/>
     <child link="cart"/>
-    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <origin xyz="0 0 2" rpy="0 0 0"/>
     <axis xyz="1 0 0"/>
-    <dynamics damping="0.05"/>
     <limit effort="1000.0" lower="-15" upper="15" velocity="5"/>
+    <dynamics damping="0.05"/>
   </joint>
 
   <!-- Cart Link -->

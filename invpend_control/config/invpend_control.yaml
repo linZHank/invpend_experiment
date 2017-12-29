@@ -7,9 +7,9 @@ invpend:
   # Position Controllers ---------------------------------------
   joint1_position_controller:
     type: effort_controllers/JointPositionController
-    joint: joint1
+    joint: slider_to_cart
     pid: {p: 100.0, i: 0.01, d: 10.0}
   joint2_position_controller:
     type: effort_controllers/JointPositionController
-    joint: joint2
+    joint: cart_to_pole
     pid: {p: 100.0, i: 0.01, d: 10.0}
