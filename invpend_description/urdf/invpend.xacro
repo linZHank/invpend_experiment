@@ -92,14 +92,14 @@
   <!-- Pole Link -->
   <link name="pole">
     <collision>
-      <origin xyz="0 0 0.5" rpy="0 0 0"/>
+      <origin xyz="0 0 -0.5" rpy="0 0 0"/>
       <geometry>
 	<box size="0.05 0.05 1"/>
       </geometry>
     </collision>
 
     <visual>
-      <origin xyz="0 0 0.5" rpy="0 0 0"/>
+      <origin xyz="0 0 -0.5" rpy="0 0 0"/>
       <geometry>
 	<box size="0.05 0.05 1"/>
       </geometry>
@@ -107,7 +107,7 @@
     </visual>
 
     <inertial>
-      <origin xyz="0 0 ${height3/2 - axel_offset}" rpy="0 0 0"/>
+      <origin xyz="0 0 -0.5" rpy="0 0 0"/>
       <mass value="10"/>
       <inertia
 	  ixx="1.0" ixy="0.0" ixz="0.0"
