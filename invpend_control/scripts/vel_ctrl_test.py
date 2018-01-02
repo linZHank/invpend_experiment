@@ -35,7 +35,7 @@ class Wobbler(object):
         '''
         rate = rospy.Rate(50)
         while not rospy.is_shutdown():
-	        cart_vel = random.uniform(-15, 15)
+	        cart_vel = random.uniform(-19, 18)
         	self._pub_vel_cmd.publish(cart_vel)
         	rate.sleep()
 
