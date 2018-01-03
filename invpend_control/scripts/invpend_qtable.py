@@ -20,11 +20,11 @@ reset_invpend() # need work
 
 # Define states and actions
 # Number of discrete states (bucket) per state dimension
-NUM_BUCKETS = (1, 1, 6, 3)  # (x, x', theta, theta')
+NUM_BUCKETS = (3, 3, 6, 3)  # (x, x', theta, theta')
 # Number of discrete actions
 NUM_ACTIONS = 2 # (left, right)
 # Bounds for each discrete state
-STATE_BOUNDS = [[-4.8, 4.8], [-0.5, 0.5], [-math.pi, math.pi], [-math.radians(50), math.radians(50)]]
+STATE_BOUNDS = [[-0.8, 0.8], [-0.5, 0.5], [-math.radians(179), math.radians(179)], [-math.radians(50), math.radians(50)]]
 # Index of the action
 ACTION_INDEX = len(NUM_BUCKETS)
 
@@ -53,7 +53,7 @@ def simulate():
     for episode in range(NUM_EPISODES):
         #reset the inverted pendulum
         reset_invpent() # need work
-        obv = subscribe_joint_states_topic() #np array: ([-,-,-,-]), need work
+        obv = read_joints_states() #np array: ([-,-,-,-]), need work
         #initial state
         state_0 = state_to_bucket(obv)
 
@@ -103,7 +103,7 @@ def simulate():
 def select_action(state, explore_rate):
     if random.random() < explore_rate:
         # pick a random action
-        action = random_pick_action_from_action_pool() # need work
+        action = random_pick_action_from_action_pool() # 0 or 1, need work
     else:
         # pick an action with highest q value
         action = np.argmax(q_table[state])
@@ -129,7 +129,7 @@ def state_to_bucket(state):
             scaling = (NUM_BUCKETS[i]-1)/bound_width
             bucket_index = int(round(scaling*state[i] - offset))
         bucket_indices.append(bucket_index)
-    return tuple(bucket_indice)
+    return tuple(bucket_indices)
 
 if __name__ == "__main__":
     simulate()
