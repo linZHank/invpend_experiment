@@ -1,6 +1,7 @@
 # Inverted Pendulum Experiment
 * Author: linZHank
 > Using gazebo to simulate inverted pendulum and control through ROS
+
 > The URDF model of the inverted pendulum and gazebo model spawn were refered to [this tutorial](http://gazebosim.org/tutorials?tut=ros_urdf&cat=connect_ros)
 
 ## How to use it
