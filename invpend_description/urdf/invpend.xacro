@@ -50,8 +50,8 @@
     <child link="cart"/>
     <origin xyz="0 0 2" rpy="0 0 0"/>
     <axis xyz="1 0 0"/>
-    <limit effort="1000.0" lower="-5" upper="5" velocity="5"/>
-    <dynamics damping="0.01"/>
+    <limit effort="1000.0" lower="-5" upper="5" velocity="10"/>
+    <dynamics damping="0.001"/>
   </joint>
 
   <!-- Cart Link -->
@@ -92,14 +92,14 @@
   <!-- Pole Link -->
   <link name="pole">
     <collision>
-      <origin xyz="0 0 -0.5" rpy="0 0 0"/>
+      <origin xyz="0 0 0.5" rpy="0 0 0"/>
       <geometry>
 	<box size="0.05 0.05 1"/>
       </geometry>
     </collision>
 
     <visual>
-      <origin xyz="0 0 -0.5" rpy="0 0 0"/>
+      <origin xyz="0 0 0.5" rpy="0 0 0"/>
       <geometry>
 	<box size="0.05 0.05 1"/>
       </geometry>
@@ -107,8 +107,8 @@
     </visual>
 
     <inertial>
-      <origin xyz="0 0 -0.5" rpy="0 0 0"/>
-      <mass value="0.5"/>
+      <origin xyz="0 0 0.5" rpy="0 0 0"/>
+      <mass value="2"/>
       <inertia
 	  ixx="1.0" ixy="0.0" ixz="0.0"
 	  iyy="1.0" iyz="0.0"
