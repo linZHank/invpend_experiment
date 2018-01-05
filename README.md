@@ -1,6 +1,7 @@
 # Inverted Pendulum Experiment
 * Author: linZHank
 > Using gazebo to simulate inverted pendulum and control through ROS
+> The URDF model of the inverted pendulum and gazebo model spawn were refered to [this tutorial](http://gazebosim.org/tutorials?tut=ros_urdf&cat=connect_ros)
 
 ## How to use it
 > My configuration was Ubuntu 16.04, ROS-Kinetic and Gazebo\-7.0
@@ -14,4 +15,3 @@
 ## Current Issues:
 - It seems ros_control was keeping exerting control to the joints, which maintains the pole not falling down.
 
-> The URDF model of the inverted pendulum and gazebo model spawn were refered to [this tutorial](http://gazebosim.org/tutorials?tut=ros_urdf&cat=connect_ros)
