@@ -39,6 +39,10 @@ class Wobbler(object):
         	self._pub_vel_cmd.publish(cart_vel)
         	rate.sleep()
 
+    def clean_shutdown(self):
+        print("Shuting dwon...")
+        self._pub_vel_cmd.publish(0)
+        return True
 
 def main():
     """ Joint Velocity Example: Wobbler
@@ -49,6 +53,7 @@ def main():
     rospy.init_node('cart_wobble')
 
     cart = Wobbler()
+    rospy.on_shutdown(cart.clean_shutdown)
     cart.wobble()
     rospy.spin()
 

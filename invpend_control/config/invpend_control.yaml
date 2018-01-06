@@ -12,4 +12,4 @@ invpend:
   joint2_position_controller:
     type: effort_controllers/JointPositionController
     joint: cart_to_pole
-    pid: {p: 100.0, i: 0.01, d: 10.0}
+    pid: {p: 0.0, i: 0.0, d: 0.0}

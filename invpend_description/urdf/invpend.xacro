@@ -37,7 +37,7 @@
 
     <inertial>
       <origin xyz="0 0 2" rpy="0 0 0"/>
-      <mass value="0.001"/>
+      <mass value="100"/>
       <inertia
 	  ixx="1.0" ixy="0.0" ixz="0.0"
 	  iyy="1.0" iyz="0.0"
@@ -51,7 +51,7 @@
     <origin xyz="0 0 2" rpy="0 0 0"/>
     <axis xyz="1 0 0"/>
     <limit effort="1000.0" lower="-5" upper="5" velocity="10"/>
-    <dynamics damping="0.001"/>
+    <dynamics damping="0.01"/>
   </joint>
 
   <!-- Cart Link -->
@@ -86,7 +86,7 @@
     <child link="pole"/>
     <origin xyz="0 -0.25 0" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
-    <dynamics damping="0.01"/>
+    <dynamics damping="0.001"/>
   </joint>
 
   <!-- Pole Link -->
@@ -108,7 +108,7 @@
 
     <inertial>
       <origin xyz="0 0 0.5" rpy="0 0 0"/>
-      <mass value="2"/>
+      <mass value="5"/>
       <inertia
 	  ixx="1.0" ixy="0.0" ixz="0.0"
 	  iyy="1.0" iyz="0.0"
