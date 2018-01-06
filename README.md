@@ -14,5 +14,5 @@
    run `roslaunch invpend_control load_invpend.launch` to spawn the model in gazebo and initiate ros_control
 
 ## Current Issues:
-- It seems ros_control was keeping exerting control to the joints, which maintains the pole not falling down.
+- \[Fixed\]It seems ros_control was keeping exerting control to the joints, which maintains the pole not falling down. _Set pid to 0, 0, 0 in config yaml file_
 
