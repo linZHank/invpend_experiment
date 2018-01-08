@@ -15,4 +15,19 @@
 
 ## Current Issues:
 - \[Fixed\]It seems ros_control was keeping exerting control to the joints, which maintains the pole not falling down. _Set pid to 0, 0, 0 in config yaml file_
-
+- Cannot reset simulation: if "/gazebo/reset_simulation" service called, gazebo model went back to initial, however "ROS time moved backwards" error appeared and cannot get data from all topics. Logs are as follows
+```
+Traceback (most recent call last):
+  File "invpend_control/scripts/vel_ctrl_test.py", line 86, in <module>
+    main()
+  File "invpend_control/scripts/vel_ctrl_test.py", line 82, in main
+    cart.wobble()
+  File "invpend_control/scripts/vel_ctrl_test.py", line 59, in wobble
+    rate.sleep()
+  File "/opt/ros/kinetic/lib/python2.7/dist-packages/rospy/timer.py", line 103, in sleep
+    sleep(self._remaining(curr_time))
+  File "/opt/ros/kinetic/lib/python2.7/dist-packages/rospy/timer.py", line 164, in sleep
+    raise rospy.exceptions.ROSTimeMovedBackwardsException(time_jump)
+rospy.exceptions.ROSTimeMovedBackwardsException: ROS time moved backwards
+Shuting dwon...
+```

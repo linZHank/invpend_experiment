@@ -21,37 +21,56 @@ class Testbed(object):
         self._sub_invpend_states = rospy.Subscriber('/invpend/joint_states', JointState, self.jsCB)
         self._pub_vel_cmd = rospy.Publisher('/invpend/joint1_velocity_controller/command', Float64, queue_size=1)
 
+        self.unpause = rospy.ServiceProxy("/gazebo/unpause_physics", Empty)
+        self.pause = rospy.ServiceProxy("/gazebo/pause_physics", Empty)
+        self.reset_sim = rospy.ServiceProxy("/gazebo/reset_simulation", Empty)
+
     def reset_simulation(self):
         ns = "/gazebo/reset_simulation"
         reset_simulation = rospy.ServiceProxy(ns, Empty)
 
     def jsCB(self, data):
     	rospy.loginfo("\n~~~Getting Inverted pendulum joint states~~~\n")
-    	pos_cart = data.position[0]
-    	vel_cart = data.velocity[0]
-    	pos_pole = data.position[1]
-    	vel_pole = data.velocity[1]
+    	pos_cart = data.position[1]
+    	vel_cart = data.velocity[1]
+    	pos_pole = data.position[0]
+    	vel_pole = data.velocity[0]
+        print("cart_position: {0:.5f}, cart_velocity: {1:.5f}, pole_angle: {2:.5f}, pole_angular_velocity: {3:.5f}".format(pos_cart, vel_cart, pos_pole, vel_pole))
         if math.fabs(pos_cart) >= 2.4:
-            self.reset_simulation()
-
+            self._reset()
+            
     def wobble(self):
         '''
         Cart performs the wobbling.
         '''
         rate = rospy.Rate(50)
         start = rospy.Time.now()
-        period_factor = 0.3
-        amplitude_factor = 1
-        
+
+        def make_cmd(elapsed):
+            period_factor = 1
+            amplitude_factor = 25
+            w = period_factor * elapsed.to_sec()
+            return amplitude_factor * math.cos(w*2*math.pi)
+
         while not rospy.is_shutdown():
-	        cart_vel = random.uniform(-19, 18)
-        	self._pub_vel_cmd.publish(cart_vel)
-        	rate.sleep()
+            elapsed = rospy.Time.now() - start
+            cmd_vel = make_cmd(elapsed)
+            self._pub_vel_cmd.publish(cmd_vel)
+       	    rate.sleep()
 
     def clean_shutdown(self):
         print("Shuting dwon...")
         self._pub_vel_cmd.publish(0)
         return True
+    
+    def _reset(self):
+        rospy.wait_for_service("/gazebo/reset_simulation")
+        print("reset simulation===\n")
+        self.reset_sim()
+        rospy.wait_for_service("/gazebo/unpause_physics")
+        self.unpause
+        rospy.wait_for_service("/gazebo/pause_physics")
+        self.pause
 
 def main():
     """ Perform testing actions provided by Testbed class
