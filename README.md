@@ -15,8 +15,9 @@
 
 ## Current Issues:
 - \[Fixed\] It seems ros_control was keeping exerting control to the joints, which maintains the pole not falling down. _Set pid to 0, 0, 0 in config yaml file_
-- \[Partial Fixed\] Cannot reset simulation: if "/gazebo/reset_simulation" service called, gazebo model went back to initial, however "ROS time moved backwards" error appeared and cannot get data from all topics. Logs are as follows. _In `invpend_control/launch/load_invpend.launch`, line 4, set ros parameter `use_sim_time` to `false` or in complete `<arg name="use_sim_time" default="false"/>`_
-- It seems `/gazebo/reset_simulation` service takes some time to complete. So, before new joint states coming in, pole should not be moved.
+- \[Partial Fixed\] Cannot reset simulation: if "/gazebo/reset_simulation" service called, gazebo model went back to initial, however "ROS time moved backwards" error appeared and cannot get data from all topics. Logs are as follows. _In `invpend_control/launch/load_invpend.launch`, line 4, set ros parameter `use_sim_time` to `false` or in complete `<arg name="use_sim_time" default="false"/>`. But, this will cause reset time consumed to be accumulated due to the mechanism in `/opt/ros/kinetic/lib/python2.7/dist-packages/rospy/timer.py`_
+  - _Consider two attempts: 1\) set `use_sim_time` to `true` and subscribe to `/gazebo/link_state` since this topic does not rely on `/clock`; 2) Try delete model and respawn it, but I have no idea if I can subsribe joint or link states from the new model._
+
 ```
 Traceback (most recent call last):
   File "invpend_control/scripts/vel_ctrl_test.py", line 86, in <module>
@@ -34,3 +35,5 @@ Shuting dwon...
 ```
 **demo video**
 [![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/5XT3R1Rg-zQ/0.jpg)](https://www.youtube.com/watch?v=5XT3R1Rg-zQ)
+
+- \[Fixed\] It seems `/gazebo/reset_simulation` service takes some time to complete. So, before new joint states coming in, pole should not be moved.
