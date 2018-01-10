@@ -32,6 +32,7 @@ class Testbed(object):
     	vel_pole = data.velocity[0]
         print("cart_position: {0:.5f}, cart_velocity: {1:.5f}, pole_angle: {2:.5f}, pole_angular_velocity: {3:.5f}".format(pos_cart, vel_cart, pos_pole, vel_pole))
         if math.fabs(pos_cart) >= 2.4:
+            self._pub_vel_cmd.publish(0.0)
             self._reset()
     
     def wobble(self):
@@ -42,8 +43,8 @@ class Testbed(object):
         start = rospy.Time.now()
 
         def make_cmd(elapsed):
-            period_factor = 1.5
-            amplitude_factor = 50
+            period_factor = .5
+            amplitude_factor = 25
             w = period_factor * elapsed.to_sec()
             return amplitude_factor * math.cos(w*2*math.pi)
 
@@ -51,7 +52,7 @@ class Testbed(object):
             elapsed = rospy.Time.now() - start
             cmd_vel = make_cmd(elapsed)
             self._pub_vel_cmd.publish(cmd_vel)
-       	    rate.sleep()
+            rate.sleep()
 
     def clean_shutdown(self):
         print("Shuting dwon...")
@@ -61,15 +62,11 @@ class Testbed(object):
     def _reset(self):
         rospy.wait_for_service("/gazebo/reset_simulation")
         print("reset simulation===\n")
-        try:
-            self.reset_sim()
-        except (rospy.exceptions) as e:
-            print("===>Exception Validated<===")
-            pass
-        rospy.wait_for_service("/gazebo/unpause_physics")
-        self.unpause
-        rospy.wait_for_service("/gazebo/pause_physics")
-        self.pause
+        self.reset_sim()
+        # rospy.wait_for_service("/gazebo/unpause_physics")
+        # self.unpause
+        # rospy.wait_for_service("/gazebo/pause_physics")
+        # self.pause
 
 def main():
     """ Perform testing actions provided by Testbed class

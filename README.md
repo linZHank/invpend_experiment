@@ -14,8 +14,9 @@
    run `roslaunch invpend_control load_invpend.launch` to spawn the model in gazebo and initiate ros_control
 
 ## Current Issues:
-- \[Fixed\]It seems ros_control was keeping exerting control to the joints, which maintains the pole not falling down. _Set pid to 0, 0, 0 in config yaml file_
-- Cannot reset simulation: if "/gazebo/reset_simulation" service called, gazebo model went back to initial, however "ROS time moved backwards" error appeared and cannot get data from all topics. Logs are as follows
+- \[Fixed\] It seems ros_control was keeping exerting control to the joints, which maintains the pole not falling down. _Set pid to 0, 0, 0 in config yaml file_
+- \[Partial Fixed\] Cannot reset simulation: if "/gazebo/reset_simulation" service called, gazebo model went back to initial, however "ROS time moved backwards" error appeared and cannot get data from all topics. Logs are as follows. _In `invpend_control/launch/load_invpend.launch`, line 4, set ros parameter `use_sim_time` to `false` or in complete `<arg name="use_sim_time" default="false"/>`_
+- It seems `/gazebo/reset_simulation` service takes some time to complete. So, before new joint states coming in, pole should not be moved.
 ```
 Traceback (most recent call last):
   File "invpend_control/scripts/vel_ctrl_test.py", line 86, in <module>
@@ -31,3 +32,5 @@ Traceback (most recent call last):
 rospy.exceptions.ROSTimeMovedBackwardsException: ROS time moved backwards
 Shuting dwon...
 ```
+**demo video**
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/5XT3R1Rg-zQ/0.jpg)](https://www.youtube.com/watch?v=5XT3R1Rg-zQ)
