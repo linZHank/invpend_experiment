@@ -37,6 +37,7 @@ class Testbed(object):
     	vel_pole = data.velocity[0]
         print("cart_position: {0:.5f}, cart_velocity: {1:.5f}, pole_angle: {2:.5f}, pole_angular_velocity: {3:.5f}".format(pos_cart, vel_cart, pos_pole, vel_pole))
         if math.fabs(pos_cart) >= 2.4:
+            self._pub_vel_cmd.publish(0.0)
             self._reset()
             
     def wobble(self):
@@ -56,7 +57,7 @@ class Testbed(object):
             elapsed = rospy.Time.now() - start
             cmd_vel = make_cmd(elapsed)
             self._pub_vel_cmd.publish(cmd_vel)
-       	    rate.sleep()
+            rate.sleep()
 
     def clean_shutdown(self):
         print("Shuting dwon...")
@@ -67,10 +68,10 @@ class Testbed(object):
         rospy.wait_for_service("/gazebo/reset_simulation")
         print("reset simulation===\n")
         self.reset_sim()
-        rospy.wait_for_service("/gazebo/unpause_physics")
-        self.unpause
-        rospy.wait_for_service("/gazebo/pause_physics")
-        self.pause
+        # rospy.wait_for_service("/gazebo/unpause_physics")
+        # self.unpause
+        # rospy.wait_for_service("/gazebo/pause_physics")
+        # self.pause
 
 def main():
     """ Perform testing actions provided by Testbed class
