@@ -33,7 +33,7 @@ class Testbed(object):
         self.vel_pole = 0
         self.PoleState = LinkState()
         self.PoleState.link_name = 'pole'
-        self.PoleState.pose.position = Point(0.0, 0.0, 2.0)
+        self.PoleState.pose.position = Point(0.0, -0.25, 2.0)
         self.PoleState.reference_frame = 'world'
                 
     def jsCB(self, data):
@@ -49,7 +49,7 @@ class Testbed(object):
                 self._pub_vel_cmd.publish(0)
                 self._pub_set_pole.publish(self.PoleState)
                 rospy.sleep(1./50)
-                self.reset_sim()
+                # self.reset_sim()
 
         
     def wobble(self):
