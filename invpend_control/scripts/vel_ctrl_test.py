@@ -14,22 +14,27 @@ import rospy
 from std_msgs.msg import (UInt16, Float64)
 from sensor_msgs.msg import JointState
 from std_srvs.srv import Empty
+from gazebo_msgs.msg import LinkState
+from geometry_msgs.msg import Point
     
 class Testbed(object):
     """ Testbed, for the pupose of testing cart-pole system """
     def __init__(self):
         self._sub_invpend_states = rospy.Subscriber('/invpend/joint_states', JointState, self.jsCB)
         self._pub_vel_cmd = rospy.Publisher('/invpend/joint1_velocity_controller/command', Float64, queue_size=1)
+        self._pub_set_pole = rospy.Publisher('/gazebo/set_link_state', LinkState)
+        self.unpause = rospy.ServiceProxy('/gazebo/unpause_physics', Empty)
+        self.pause = rospy.ServiceProxy('/gazebo/pause_physics', Empty)
+        self.reset_sim = rospy.ServiceProxy('/gazebo/reset_simulation', Empty)
 
-        self.unpause = rospy.ServiceProxy("/gazebo/unpause_physics", Empty)
-        self.pause = rospy.ServiceProxy("/gazebo/pause_physics", Empty)
-        self.reset_sim = rospy.ServiceProxy("/gazebo/reset_simulation", Empty)
-        self.reset_world = rospy.ServiceProxy("/gazebo/reset_world", Empty)
-
-        self.pos_cart = 10
+        self.pos_cart = 0
         self.vel_cart = 0
-        self.pos_pole = math.pi
+        self.pos_pole = 0
         self.vel_pole = 0
+        self.PoleState = LinkState()
+        self.PoleState.link_name = 'pole'
+        self.PoleState.pose.position = Point(0.0, 0.0, 2.0)
+        self.PoleState.reference_frame = 'world'
                 
     def jsCB(self, data):
     	rospy.loginfo("\n~~~Getting Inverted pendulum joint states~~~\n")
@@ -39,16 +44,19 @@ class Testbed(object):
     	self.vel_pole = data.velocity[0]
         print("cart_position: {0:.5f}, cart_velocity: {1:.5f}, pole_angle: {2:.5f}, pole_angular_velocity: {3:.5f}".format(self.pos_cart, self.vel_cart, self.pos_pole, self.vel_pole))
         if math.fabs(self.pos_cart) >= 2.4:
-            self._pub_vel_cmd.publish(0)
-            self.reset_world()
-            self.reset_sim()
-            print("reset sim ===\n")
+            print("=== reset invpend pos ===\n")
+            for _ in range(50):
+                self._pub_vel_cmd.publish(0)
+                self._pub_set_pole.publish(self.PoleState)
+                rospy.sleep(1./50)
+                self.reset_sim()
+
         
     def wobble(self):
         '''
         Cart performs the wobbling.
         '''
-        # rate = rospy.Rate(50)
+        rate = rospy.Rate(50)
         # start = rospy.Time.now()
 
         def make_cmd(elapsed):
