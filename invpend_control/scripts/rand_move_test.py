@@ -56,7 +56,7 @@ class Testbed(object):
                 reset_count += 1
                 rospy.sleep(1./self.freq)
         
-    def rand_move(self, vel_cmd):
+    def rand_move(self):
         '''
         For the purpose of test, 
         implement random velocity control on cart.
