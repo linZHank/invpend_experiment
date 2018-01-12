@@ -40,6 +40,7 @@ class CartPole(object):
         self.PoleState.pose.position = Point(0.0, -0.25, 2.0)
         self.PoleState.reference_frame = 'world'
         self.ex_rng = False # cart-pole exceed range of mation
+        self.cmd = 0
 
     def jsCB(self, data):
     	rospy.loginfo("~~~Getting Inverted pendulum joint states~~~")
@@ -71,11 +72,14 @@ class CartPole(object):
         '''
         rate = rospy.Rate(self.freq)
         while not rospy.is_shutdown():
-            print(str(self.ex_rng)) # debug
             if self.ex_rng == True:
-                vel_cmd = 0
-            self._pub_vel_cmd.publish(vel_cmd)
-            print("---> velocity command: {:.4f}".format(vel_cmd))
+                print("cart-pole is out of range") # debug
+                self.cmd = 0
+            else:
+                print("cart-pole is within the range") # debug
+                self.cmd = vel_cmd
+            self._pub_vel_cmd.publish(self.cmd)
+            print("---> publishing velocity command: {:.4f}".format(self.cmd))
             rate.sleep()
 
     def clean_shutdown(self):
