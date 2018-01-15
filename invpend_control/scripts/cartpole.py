@@ -19,13 +19,13 @@ from gazebo_msgs.msg import LinkState
 from geometry_msgs.msg import Point
 
 def exceedRange(pos_cart, pos_pole):
-    return math.fabs(pos_cart) > 2.4 or math.fabs(pos_pole) > math.pi/2 # cart: +-2.4; pole: +-15degrees
+    return math.fabs(pos_cart) > 2.4 or math.fabs(pos_pole) > math.pi/12 # cart: +-2.4; pole: +-15degrees
 
 class CartPole(object):
     """ Testbed, for the pupose of testing cart-pole system """
     def __init__(self):
         # init topics and services
-        self._sub_invpend_states = rospy.Subscriber('/invpend/joint_states', JointState, self.jsCB)
+        self._sub_invpend_states = rospy.Subscriber('/invpend/joint_states', JointState, self.jstates_callback)
         self._pub_vel_cmd = rospy.Publisher('/invpend/joint1_velocity_controller/command', Float64, queue_size=1)
         self._pub_set_pole = rospy.Publisher('/gazebo/set_link_state', LinkState)
         self.reset_sim = rospy.ServiceProxy('/gazebo/reset_simulation', Empty)
@@ -43,7 +43,7 @@ class CartPole(object):
         self.ex_rng = False # cart-pole exceed range of mation
         self.cmd = 0
 
-    def jsCB(self, data):
+    def jstates_callback(self, data):
         """ Callback function for subscribing /invpend/joint_states topic """
     	rospy.loginfo("~~~Getting Inverted pendulum joint states~~~")
     	self.pos_cart = data.position[1]
@@ -56,7 +56,7 @@ class CartPole(object):
         # if self.ex_rng == True:
         #     self.resetEnv()
 
-    def resetEnv(self):
+    def reset_env(self):
         reset_count = 0
         print("=== reset invpend pos ===\n")
         while reset_count < self.reset_dur*self.freq:
@@ -71,23 +71,14 @@ class CartPole(object):
             self.vel_pole = 0
             self.reward = 0
                 
-    def observeEnv(self):
+    def observe_env(self):
         """ Get cart-pole state, reward and out of range flag from environment """
         return np.array([self.pos_cart, self.vel_cart, self.pos_pole, self.vel_pole]), self.reward, self.ex_rng
 
     def take_action(self, vel_cmd):
-        rate = rospy.Rate(self.freq)
-        while not rospy.is_shutdown():
-            if self.ex_rng == True:
-                print("cart-pole is out of range") # debug
-                self.cmd = 0
-            else:
-                print("cart-pole is within the range") # debug
-                self.cmd = vel_cmd
-            self._pub_vel_cmd.publish(self.cmd)
-            print("---> publishing velocity command: {:.4f}".format(self.cmd))
-            rate.sleep()
-
+        self._pub_vel_cmd.publish(vel_cmd)
+        print("---> Velocity command to cart: {:.4f} m/s".format(vel_cmd))
+        
     def clean_shutdown(self):
         print("Shuting down...")
         self._pub_vel_cmd.publish(0)
