@@ -19,7 +19,7 @@ from gazebo_msgs.msg import LinkState
 from geometry_msgs.msg import Point
 
 def exceedRange(pos_cart, pos_pole):
-    return math.fabs(pos_cart) > 2.4 or math.fabs(pos_pole) > math.pi/12 # cart: +-2.4; pole: +-15degrees
+    return math.fabs(pos_cart) > 2.4 or math.fabs(pos_pole) > math.pi/2 # cart: +-2.4; pole: +-15degrees
 
 class CartPole(object):
     """ Testbed, for the pupose of testing cart-pole system """
@@ -51,10 +51,10 @@ class CartPole(object):
     	self.pos_pole = data.position[0]
     	self.vel_pole = data.velocity[0]
         # For debug purpose, uncomment the following line
-        # print("cart_position: {0:.5f}, cart_velocity: {1:.5f}, pole_angle: {2:.5f}, pole_angular_velocity: {3:.5f} ".format(self.pos_cart, self.vel_cart, self.pos_pole, self.vel_pole))
+        print("cart_position: {0:.5f}, cart_velocity: {1:.5f}, pole_angle: {2:.5f}, pole_angular_velocity: {3:.5f} ".format(self.pos_cart, self.vel_cart, self.pos_pole, self.vel_pole))
         self.ex_rng = exceedRange(self.pos_cart, self.pos_pole)
-        if self.ex_rng == True:
-            self.resetEnv()
+        # if self.ex_rng == True:
+        #     self.resetEnv()
 
     def resetEnv(self):
         reset_count = 0
@@ -76,10 +76,6 @@ class CartPole(object):
         return np.array([self.pos_cart, self.vel_cart, self.pos_pole, self.vel_pole]), self.reward, self.ex_rng
 
     def take_action(self, vel_cmd):
-        '''
-        For the purpose of test, 
-        implement random velocity control on cart.
-        '''
         rate = rospy.Rate(self.freq)
         while not rospy.is_shutdown():
             if self.ex_rng == True:

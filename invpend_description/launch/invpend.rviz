@@ -56,17 +56,17 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
-        link1:
+        slidebar:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        link2:
+        cart:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        link3:
+        pole3:
           Alpha: 1
           Show Axes: false
           Show Trail: false
