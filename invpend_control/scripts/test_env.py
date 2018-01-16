@@ -14,14 +14,13 @@ class Testbed(CartPole):
         """ Control cart with random velocity command """
         rate = rospy.Rate(self.freq)
         while not rospy.is_shutdown():
-            if self.ex_rng:
-                print("=== Out of range, reset env ===")
-                self.resetEnv()
+            ob, reward, out = self.observe_env()
+            if self.out_range:
+                self.reset_env()
             else:
                 print("=== Within range, exert random vel command ===")
                 vel_cmd = random.uniform(-10, 10)
-                self._pub_vel_cmd.publish(vel_cmd)
-                print("---> Velocity command: {:.4f}".format(vel_cmd))
+                self.take_action(vel_cmd)
             rate.sleep()
 
     def sin_move(self):
@@ -29,17 +28,16 @@ class Testbed(CartPole):
         rate = rospy.Rate(self.freq)
         period_factor = 1
         amplitude_factor = 25
-        while not rospy.is_shutdown():            
-            if self.ex_rng:
-                print("=== Out of range, reset env ===")
-                self.resetEnv()
+        while not rospy.is_shutdown():
+            ob, reward, out = self.observe_env()
+            if self.out_range:
+                self.reset_env()
             else:
                 print("=== Within range, exert sinusoidal vel command ===")
                 elapsed = rospy.Time.now() - self.start
                 w = period_factor * elapsed.to_sec()
                 vel_cmd = amplitude_factor * math.cos(w*2*math.pi)
-                self._pub_vel_cmd.publish(vel_cmd)
-                print("---> Velocity command: {:.4f}".format(vel_cmd))
+                self.take_action(vel_cmd)
             rate.sleep()
 
 def main():

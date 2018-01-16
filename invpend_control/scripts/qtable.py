@@ -30,8 +30,6 @@ class QlearnCartPole(CartPole):
     """ Inherent from CartPole class and add q-learning method """
     def __init__(self):
         CartPole.__init__(self)
-        # Q-table
-        self.q_table = np.zeros(NUM_BUCKETS + (NUM_ACTIONS,))
 
     def train(self):
         # Initialize learning
@@ -41,17 +39,23 @@ class QlearnCartPole(CartPole):
         explore_rate = get_explore_rate(episode)
         discount_factor = 0.99
         num_streaks = 0
+        # Initialize Q table
+        q_table = np.zeros(NUM_BUCKETS + (NUM_ACTIONS,))
         # reset environment
         self.reset_env()
         # initial joint states
         ob, _, _ = self.observe_env()
         # map joint states to slot in Q table
         state_0 = observeToBucket(ob)
+        # make space to store episodic reward accumulation
+        accumulated_reward = 0
+        reward_list = []
         # get ready to learn
         rate = rospy.Rate(self.freq)
         while not rospy.is_shutdown():
+            print("::: Episode {0:d}, Step {1:d}".format(episode, step))
             # select an action with epsilon greedy, decaying explore_rate
-            action_index, action = select_action(state_0, explore_rate)
+            action_index, action = select_action(q_table, state_0, explore_rate)
             # apply action as velocity comand
             self.take_action(action)
             # give the enviroment some time to obtain new observation
@@ -61,26 +65,34 @@ class QlearnCartPole(CartPole):
             # map new observation to slot in Q table
             state = observeToBucket(ob)
             # update Q-table
-            max_q = np.amax(self.q_table[state])
-            self.q_table[state_0 + (action_index,)] += learning_rate*(reward + discount_factor*max_q - self.q_table[state_0 + (action_index,)])
+            print("Q table gets update...")
+            max_q = np.amax(q_table[state])
+            q_table[state_0 + (action_index,)] += learning_rate*(reward + discount_factor*max_q - q_table[state_0 + (action_index,)])
             if episode <= NUM_EPISODES and num_streaks < STREAK_TO_END:
                 if not out and step <= MAX_STEP:
                     state_0 = state
+                    accumulated_reward += 1
+                    print("$$$ Accumulated reward in episode {0:d} was {1:d}".format(episode, accumulated_reward))
                     step += 1
                 else:
                     if step == MAX_STEP:
                         num_streaks += 1
                     else:
                         num_streaks = 0
+                    accumulated_reward += 1
+                    print("$$$ Accumulated reward in episode {0:d} was {1:d}".format(episode, accumulated_reward))
+                    reward_list.append(accumulated_reward)
                     # reset env for next episode
                     self.reset_env()
                     # back to initial joint states
                     ob, _, _ = self.observe_env()
                     # map joint states to slot in Q table
                     state_0 = observeToBucket(ob)
+                    step = 0
                     episode += 1
                     explore_rate = get_explore_rate(episode)
                     learning_rate = get_learning_rate(episode)
+                    accumulated_reward = 0
             else:
                 # save q_table
                 self.clean_shutdown()
@@ -109,15 +121,17 @@ def observeToBucket(state):
         bucket_indice.append(bucket_index)
     return tuple(bucket_indice)
 
-def select_action(state, explore_rate):
+def select_action(q_table, state, explore_rate):
     # Select a random action
     if random.random() < explore_rate:
         act_idx = random.randrange(0,NUM_ACTIONS)
         action = ACTIONS[act_idx]
+        print("!!! Action selected randomly !!!")
     # Select the action with the highest q
     else:
-        act_idx = np.argmax(self.q_table[state])
+        act_idx = np.argmax(q_table[state])
         action = ACTIONS[act_idx]
+        print("||| Action selected greedily |||")
     return act_idx, action
 
 def main():
