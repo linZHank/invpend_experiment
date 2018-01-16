@@ -1,4 +1,9 @@
 #!/usr/bin/env python
+
+
+""" Make a cart-pole system to keep balance using Q Learning """
+
+
 # Import utilities
 import numpy as np
 import math
@@ -9,10 +14,12 @@ import rospy
 # Import CartPole class from cartpole.py
 from cartpole import CartPole
 
+# Time the code execution
+start_time = time.time()
 
 # Reinforement learning environment related settings
 ## Discrete actions, states and buckets
-ACTIONS = (-1., 0., 1.) # discrete velocity command
+ACTIONS = (-2., -1., 0., 1., 2.) # discrete velocity command
 NUM_ACTIONS = len(ACTIONS)
 upper_bound = [2.4, 1, math.pi/12, math.radians(50)]
 lower_bound = [-2.4, -1, -math.pi/12, -math.radians(50)]
@@ -22,7 +29,7 @@ NUM_BUCKETS = (3, 3, 6, 3) # (pos_cart, vel_cart, pos_pole, vel_pole)
 MIN_LEARNING_RATE = 0.1
 MIN_EXPLORE_RATE = 0.01
 ## Simulation related constans
-NUM_EPISODES = 1000
+NUM_EPISODES = 10000
 MAX_STEP = 250
 STREAK_TO_END = 120
 
@@ -94,8 +101,14 @@ class QlearnCartPole(CartPole):
                     learning_rate = get_learning_rate(episode)
                     accumulated_reward = 0
             else:
-                # save q_table
+                # stop sending velocity command
                 self.clean_shutdown()
+                # save reward list and Q table
+                reward_list = np.asarray(reward_list) # convert list to numpy array
+                np.save('reward_list.npy', reward_list)
+                np.save('q_table.npy', q_table)
+                end_time = time.time() # time stamp end of code
+                break
             rate.sleep()
 
 # Useful functions

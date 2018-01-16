@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 
-# This script tests if the self-created inverted pendulum can be controled by joint velocity controller
+""" Configure a cart-pole system spawned in Gazebo to be a qualified environment for reinforcement learning """
 
 
 from __future__ import print_function
@@ -46,7 +46,7 @@ class CartPole(object):
 
     def jstates_callback(self, data):
         """ Callback function for subscribing /invpend/joint_states topic """
-    	rospy.loginfo("~~~Getting Inverted pendulum joint states~~~")
+    	# rospy.loginfo("~~~Getting Inverted pendulum joint states~~~")
     	self.pos_cart = data.position[1]
     	self.vel_cart = data.velocity[1]
     	self.pos_pole = data.position[0]
@@ -62,7 +62,7 @@ class CartPole(object):
         reset_count = 0
         print("\n=== Reset cart-pole to (0, 0, 0, 0) ===\n")
         while not rospy.is_shutdown() and reset_count < self.reset_dur*self.freq:
-            print("=reset counter: ", str(reset_count)) # debug log
+            # print("=reset counter: ", str(reset_count)) # debug log
             self._pub_vel_cmd.publish(0)
             self._pub_set_pole.publish(self.PoleState)
             self.pos_cart = 0
