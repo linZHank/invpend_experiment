@@ -20,4 +20,4 @@ All python scripts is located at `/your/path/to/ros_ws/src/invpend_experiment/in
 - `qtable.py` runs Q-learning algorithm on the cart-pole, however parameters are undertuned at current stage.
 
 ## Demo video
-[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/VIDEOID/0.jpg)](https://www.youtube.com/watch?v=VIDEOID)
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/ZidldNeV2J0/0.jpg)](https://youtu.be/ZidldNeV2J0)
