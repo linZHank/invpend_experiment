@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 
-""" Make a cart-pole system to keep balance using Q Learning """
+""" Train inverted pendulum to keep balance using Q Learning """
 
 
 # Import utilities
@@ -10,22 +10,13 @@ import numpy as np
 import math
 import random
 import time
+import datetime
 import matplotlib.pyplot as plt
 # Import rospy for ros manipulation
 import rospy
 # Import CartPole class from cartpole.py
 from cartpole import CartPole, bcolors
 
-# class bcolors:
-#     """ For the purpose of print in terminal with colors """
-#     HEADER = '\033[95m'
-#     OKBLUE = '\033[94m'
-#     OKGREEN = '\033[92m'
-#     WARNING = '\033[93m'
-#     FAIL = '\033[91m'
-#     ENDC = '\033[0m'
-#     BOLD = '\033[1m'
-#     UNDERLINE = '\033[4m'
 
 # Time the code execution
 start_time = time.time()
@@ -41,7 +32,7 @@ NUM_BUCKETS = (1, 1, 6, 3) # (pos_cart, vel_cart, pos_pole, vel_pole)
 MIN_LEARNING_RATE = 0.1
 MIN_EXPLORE_RATE = 0.01
 ## Simulation related constans
-NUM_EPISODES = 1000
+NUM_EPISODES = 2000
 MAX_STEP = 250
 STREAK_TO_END = 120
 
@@ -117,13 +108,14 @@ class QlearnCartPole(CartPole):
                 self.clean_shutdown()
                 # save reward list and Q table
                 reward_list = np.asarray(reward_list) # convert list to numpy array
-                np.save('reward_list.npy', reward_list)
-                np.save('q_table.npy', q_table)
+                np.save('qtable_storage/reward_list' + datetime.datetime.now().strftime("%y-%m-%d-%H-%M") + '.npy', reward_list)
+                np.save('qtable_storage/q_table' + datetime.datetime.now().strftime("%y-%m-%d-%H-%M") + '.npy', q_table)
                 end_time = time.time() # time stamp end of code
-                print(bcolors.WARNING, "@@@ Training finished...\nTraining time was {:.5f}".format(start_time - end_time), bcolors.ENDC)
+                print(bcolors.WARNING, "@@@ Training finished...\nTraining time was {:.5f}".format(end_time - start_time), bcolors.ENDC)
                 plt.plot(reward_list)
                 plt.xlabel('Episode')
                 plt.ylabel('Accumulated reward')
+                plt.show()
                 break
             rate.sleep()
 
