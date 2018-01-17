@@ -5,7 +5,7 @@
 > The URDF model of the inverted pendulum and gazebo model spawn were refered to [this tutorial](http://gazebosim.org/tutorials?tut=ros_urdf&cat=connect_ros)
 
 ## How to use it
-> My configuration was Ubuntu 16.04, ROS-Kinetic and Gazebo\-7.0
+> My configuration was Ubuntu 16.04, ROS-Kinetic and Gazebo\-7.0. Other combinations of Linux, ROS and Gazebo may work, but not guaranteed.
 1. cd to the `/src` directory in ROS workspace \(e.g. `cd ~/ros_ws/src`\)
 2. `git clone https://github.com/linZHank/invpend_experiment.git`
 3. `catkin_make`, or `carkin build` if you were using [Catkin Command Line Tools](https://catkin-tools.readthedocs.io/en/latest/)
@@ -13,29 +13,11 @@
 5. run `roslaunch invpend_description invpend_rviz.launch` to check the model in rviz;
    run `roslaunch invpend_control load_invpend.launch` to spawn the model in gazebo and initiate ros_control
 
-## Current Issues:
-- \[Fixed\] It seems ros_control was keeping exerting control to the joints, which maintains the pole not falling down.
-  - **Set pid to 0, 0, 0 in config yaml file, to disable position control**
-- \[Fixed\] Cannot reset simulation: if "/gazebo/reset_simulation" service called, gazebo model went back to initial, however "ROS time moved backwards" error appeared and cannot get data from all topics. Logs are as follows. _In `invpend_control/launch/load_invpend.launch`, line 4, set ros parameter `use_sim_time` to `false` or in complete `<arg name="use_sim_time" default="false"/>`. But, this will cause reset time consumed to be accumulated due to the mechanism in `/opt/ros/kinetic/lib/python2.7/dist-packages/rospy/timer.py`_
-  - **Publish `/gazebo/set_link_state` topic to set "pole" link's state as initial**
+## Scripts you can play with
+All python scripts is located at `/your/path/to/ros_ws/src/invpend_experiment/invpend_control/scripts`.
+- `cartpole.py` configures the model to be a reinforcement learning ready enviroment
+- `test_env.py` can run some tests on the environment. Choices are sending random command and sinusoidal command to the cart through velocity control
+- `qtable.py` runs Q-learning algorithm on the cart-pole, however parameters are undertuned at current stage.
 
->
-```
-Traceback (most recent call last):
-  File "invpend_control/scripts/vel_ctrl_test.py", line 86, in <module>
-    main()
-  File "invpend_control/scripts/vel_ctrl_test.py", line 82, in main
-    cart.wobble()
-  File "invpend_control/scripts/vel_ctrl_test.py", line 59, in wobble
-    rate.sleep()
-  File "/opt/ros/kinetic/lib/python2.7/dist-packages/rospy/timer.py", line 103, in sleep
-    sleep(self._remaining(curr_time))
-  File "/opt/ros/kinetic/lib/python2.7/dist-packages/rospy/timer.py", line 164, in sleep
-    raise rospy.exceptions.ROSTimeMovedBackwardsException(time_jump)
-rospy.exceptions.ROSTimeMovedBackwardsException: ROS time moved backwards
-Shuting dwon...
-```
-**demo video**
-[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/5XT3R1Rg-zQ/0.jpg)](https://www.youtube.com/watch?v=5XT3R1Rg-zQ)
-
-- \[Fixed\] It seems `/gazebo/reset_simulation` service takes some time to complete. So, before new joint states coming in, pole should not be moved.
+## Demo video
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/VIDEOID/0.jpg)](https://www.youtube.com/watch?v=VIDEOID)

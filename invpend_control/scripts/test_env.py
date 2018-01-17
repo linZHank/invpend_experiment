@@ -46,7 +46,7 @@ def main():
     test_agent = Testbed()
     rospy.on_shutdown(test_agent.clean_shutdown)
     # test_agent.random_move()
-    test_agent.sin_move()
+    test_agent.random_move()
     rospy.spin()
 
 if __name__ == '__main__':

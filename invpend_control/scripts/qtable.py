@@ -5,31 +5,43 @@
 
 
 # Import utilities
+from __future__ import print_function
 import numpy as np
 import math
 import random
 import time
+import matplotlib.pyplot as plt
 # Import rospy for ros manipulation
 import rospy
 # Import CartPole class from cartpole.py
-from cartpole import CartPole
+from cartpole import CartPole, bcolors
+
+# class bcolors:
+#     """ For the purpose of print in terminal with colors """
+#     HEADER = '\033[95m'
+#     OKBLUE = '\033[94m'
+#     OKGREEN = '\033[92m'
+#     WARNING = '\033[93m'
+#     FAIL = '\033[91m'
+#     ENDC = '\033[0m'
+#     BOLD = '\033[1m'
+#     UNDERLINE = '\033[4m'
 
 # Time the code execution
 start_time = time.time()
-
 # Reinforement learning environment related settings
 ## Discrete actions, states and buckets
-ACTIONS = (-2., -1., 0., 1., 2.) # discrete velocity command
+ACTIONS = (-5., 0., 5.) # discrete velocity command
 NUM_ACTIONS = len(ACTIONS)
 upper_bound = [2.4, 1, math.pi/12, math.radians(50)]
 lower_bound = [-2.4, -1, -math.pi/12, -math.radians(50)]
 STATE_BOUNDS = zip(lower_bound, upper_bound)
-NUM_BUCKETS = (3, 3, 6, 3) # (pos_cart, vel_cart, pos_pole, vel_pole)
+NUM_BUCKETS = (1, 1, 6, 3) # (pos_cart, vel_cart, pos_pole, vel_pole)
 ## Learning related constants
 MIN_LEARNING_RATE = 0.1
 MIN_EXPLORE_RATE = 0.01
 ## Simulation related constans
-NUM_EPISODES = 10000
+NUM_EPISODES = 1000
 MAX_STEP = 250
 STREAK_TO_END = 120
 
@@ -60,7 +72,7 @@ class QlearnCartPole(CartPole):
         # get ready to learn
         rate = rospy.Rate(self.freq)
         while not rospy.is_shutdown():
-            print("::: Episode {0:d}, Step {1:d}".format(episode, step))
+            print(bcolors.OKBLUE, "::: Episode {0:d}, Step {1:d}".format(episode, step), bcolors.ENDC)
             # select an action with epsilon greedy, decaying explore_rate
             action_index, action = select_action(q_table, state_0, explore_rate)
             # apply action as velocity comand
@@ -72,7 +84,7 @@ class QlearnCartPole(CartPole):
             # map new observation to slot in Q table
             state = observeToBucket(ob)
             # update Q-table
-            print("Q table gets update...")
+            print(bcolors.OKGREEN, "Q table gets update...", bcolors.ENDC)
             max_q = np.amax(q_table[state])
             q_table[state_0 + (action_index,)] += learning_rate*(reward + discount_factor*max_q - q_table[state_0 + (action_index,)])
             if episode <= NUM_EPISODES and num_streaks < STREAK_TO_END:
@@ -108,6 +120,10 @@ class QlearnCartPole(CartPole):
                 np.save('reward_list.npy', reward_list)
                 np.save('q_table.npy', q_table)
                 end_time = time.time() # time stamp end of code
+                print(bcolors.WARNING, "@@@ Training finished...\nTraining time was {:.5f}".format(start_time - end_time), bcolors.ENDC)
+                plt.plot(reward_list)
+                plt.xlabel('Episode')
+                plt.ylabel('Accumulated reward')
                 break
             rate.sleep()
 

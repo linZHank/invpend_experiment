@@ -21,8 +21,21 @@ from geometry_msgs.msg import Point
 def exceedRange(pos_cart, pos_pole):
     return math.fabs(pos_cart) > 2.4 or math.fabs(pos_pole) > math.pi/12 # cart: +-2.4; pole: +-15degrees
 
+class bcolors:
+    """ For the purpose of print in terminal with colors """
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+    
 class CartPole(object):
-    """ Testbed, for the pupose of testing cart-pole system """
+    """ A cart-pole on a sliding bar;
+    only the cart can be actuated;
+    """
     def __init__(self):
         # init topics and services
         self._sub_invpend_states = rospy.Subscriber('/invpend/joint_states', JointState, self.jstates_callback)
@@ -36,7 +49,7 @@ class CartPole(object):
         self.reward = 0
         self.out_range = False
         # init reset_env parameters
-        self.reset_dur = 1 # reset duration, sec
+        self.reset_dur = .2 # reset duration, sec
         self.freq = 50 # topics pub and sub frequency, Hz
         self.PoleState = LinkState()
         self.PoleState.link_name = 'pole'
@@ -60,7 +73,7 @@ class CartPole(object):
     def reset_env(self):
         rate = rospy.Rate(self.freq)
         reset_count = 0
-        print("\n=== Reset cart-pole to (0, 0, 0, 0) ===\n")
+        print(bcolors.WARNING, "\n=== Reset cart-pole to (0, 0, 0, 0) ===\n", bcolors.ENDC)
         while not rospy.is_shutdown() and reset_count < self.reset_dur*self.freq:
             # print("=reset counter: ", str(reset_count)) # debug log
             self._pub_vel_cmd.publish(0)
@@ -82,9 +95,9 @@ class CartPole(object):
 
     def take_action(self, vel_cmd):
         self._pub_vel_cmd.publish(vel_cmd)
-        print("---> Velocity command to cart: {:.4f} m/s".format(vel_cmd))
+        print(bcolors.OKGREEN, "---> Velocity command to cart: {:.4f} m/s".format(vel_cmd), bcolors.ENDC)
         
     def clean_shutdown(self):
-        print("Shuting down...")
+        print(bcolors.HEADER, "Shuting down...", bcolors.ENDC)
         self._pub_vel_cmd.publish(0)
         return True
