@@ -47,8 +47,10 @@ class CartPole(object):
         self.vel_cart = 0
         self.pos_pole = 0
         self.vel_pole = 0
-        self.reward = 0
+        self.reward = 0.
         self.out_range = False
+        self.reset_stamp = time.time()
+        self.time_elapse = 0.
         # init reset_env parameters
         self.reset_dur = .2 # reset duration, sec
         self.freq = 50 # topics pub and sub frequency, Hz
@@ -66,18 +68,19 @@ class CartPole(object):
     	self.pos_pole = data.position[0]
     	self.vel_pole = data.velocity[0]
         self.out_range = exceedRange(self.pos_cart, self.pos_pole)
+        self.time_elapse = time.time() - self.reset_stamp
         if self.out_range == True:
-            self.reward = 0
+            self.reward = 0.
         else:
-            if 1./self.pos_pole > 500:
-                self.reward = 500
-            else:
-                self.reward = 1./self.pos_pole
+            self.reward = math.fabs(1./self.pos_pole) + self.time_elapse
+            if self.reward > 5:
+                self.reward = 5
 
     def reset_env(self):
+        """ Reset cart-pole to initial state"""
         rate = rospy.Rate(self.freq)
         reset_count = 0
-        print(bcolors.WARNING, "\n=== Reset cart-pole to (0, 0, 0, 0) ===\n", bcolors.ENDC)
+        print(bcolors.WARNING, "\n=== Reset cart-pole to initial ===\n", bcolors.ENDC)
         while not rospy.is_shutdown() and reset_count < self.reset_dur*self.freq:
             # print("=reset counter: ", str(reset_count)) # debug log
             self._pub_vel_cmd.publish(0)
@@ -86,15 +89,16 @@ class CartPole(object):
             self.vel_cart = 0
             self.pos_pole = 0
             self.vel_pole = 0
-            self.reward = 0
+            self.reward = 0.
             # self.out_range = False
             reset_count += 1
             rate.sleep()
+        self.reset_stamp = time.time()
                 
     def observe_env(self):
         """ Get cart-pole state, reward and out of range flag from environment """
         # For debug purpose, uncomment the following line
-        print("~~~ Observation: cart_position: {0:.5f}, cart_velocity: {1:.5f}, pole_angle: {2:.5f}, pole_angular_velocity: {3:.5f}\nreward: {4:d}\nout of range: {5:} ".format(self.pos_cart, self.vel_cart, self.pos_pole, self.vel_pole, self.reward, self.out_range))
+        print("~~~ Observation: cart_position: {0:.5f}, cart_velocity: {1:.5f}, pole_angle: {2:.5f}, pole_angular_velocity: {3:.5f}\nreward: {4:.5f}\nout of range: {5:} ".format(self.pos_cart, self.vel_cart, self.pos_pole, self.vel_pole, self.reward, self.out_range))
         return np.array([self.pos_cart, self.vel_cart, self.pos_pole, self.vel_pole]), self.reward, self.out_range
 
     def take_action(self, vel_cmd):

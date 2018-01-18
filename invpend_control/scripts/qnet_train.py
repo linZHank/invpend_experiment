@@ -34,6 +34,7 @@ OUTPUT_LAYER_SIZE = NUM_ACTIONS
 NUM_EPOCHS = 1000
 MAX_STEP = 250
 STREAK_TO_END = 120
+MIN_EXPLORE_RATE = 0.05
 
 class QlearnCartPole(CartPole):
     """ Inherent from CartPole class and add q-learning method """
@@ -43,7 +44,7 @@ class QlearnCartPole(CartPole):
     def train(self):
         # Traing settings
         gamma = .99 # discount_factor
-        epsilon = .1 # explore_rate
+        epsilon = get_explore_rate(0) # explore_rate
         # make space to store episodic reward accumulation
         reward_list = []
         stepcost_list = []
@@ -94,8 +95,8 @@ class QlearnCartPole(CartPole):
                 step = 0
                 accumulated_reward = 0
                 out = False
-                while step < MAX_STEP and not out:
-                    print(bcolors.OKBLUE, "::: Epoch {0:d}, Step {1:d}".format(epoch, step), bcolors.ENDC)
+                while step < MAX_STEP and not out and not rospy.is_shutdown():
+                    print(bcolors.OKBLUE, "::: Epoch {0:d}, Step {1:d}, Time Elapsed: {2:.7f}".format(epoch, step, self.time_elapse), bcolors.ENDC)
                     # initial joint states
                     ob, _, out = self.observe_env()
                     q, argmax_q = sess.run([q_values, prediction],
@@ -124,10 +125,10 @@ class QlearnCartPole(CartPole):
                     accumulated_reward += reward
                     step += 1
                 # learning rate decay    
-                epsilon = 1./((epoch/50) + 10)
+                epsilon = get_explore_rate(epoch)
                 # store reward and step cost
                 reward_list.append(accumulated_reward)
-                print("$$$ accumulated reward in epoch {0:d}: {1:d}".format(epoch,accumulated_reward))
+                print("$$$ accumulated reward in epoch {0:d}: {1:.5f}".format(epoch,accumulated_reward))
                 stepcost_list.append(step)
             # stop sending velocity command
             self.clean_shutdown()
@@ -141,6 +142,11 @@ class QlearnCartPole(CartPole):
             plt.xlabel('Episode')
             plt.ylabel('Accumulated reward')
             plt.show()
+            self.clean_shutdown()
+        sess.close()
+
+def get_explore_rate(episode):
+    return max(MIN_EXPLORE_RATE, min(1, 1.0-math.log10((episode+1)/25.)))
 
 def main():
     """ Set up Q-learning and run """
