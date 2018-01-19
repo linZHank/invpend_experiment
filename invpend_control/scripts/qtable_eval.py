@@ -29,8 +29,8 @@ lower_bound = [-2.4, -1, -math.pi/12, -math.radians(50)]
 STATE_BOUNDS = zip(lower_bound, upper_bound)
 NUM_BUCKETS = (1, 1, 6, 3) # (pos_cart, vel_cart, pos_pole, vel_pole)
 ## Simulation related constans
-NUM_EPISODES = 5
-MAX_STEP = 250
+NUM_EPISODES = 1
+MAX_STEP = 2500
 
 def main():
     """ Set up Q-learning and run """
