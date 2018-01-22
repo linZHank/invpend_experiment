@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 # Import rospy for ros manipulation
 import rospy
 # Import CartPole class from cartpole.py
-from cartpole import CartPole, bcolors
+from cartpole_v0 import CartPole, bcolors
 
 
 # Time the code execution

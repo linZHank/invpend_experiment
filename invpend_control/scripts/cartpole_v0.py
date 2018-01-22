@@ -53,8 +53,8 @@ class CartPole(object):
         self.freq = 50 # topics pub and sub frequency, Hz
         self.PoleState = LinkState()
         self.PoleState.link_name = 'pole'
-        self.PoleState.pose.position = Point(0.0, -0.25, 2.0) # pole's position w.r.t. world
-        self.PoleState.reference_frame = 'world'
+        self.PoleState.pose.position = Point(0.0, -0.275, 0.0) # pole's position w.r.t. world
+        self.PoleState.reference_frame = 'slidebar'
         self.cmd = 0        
 
     def jstates_callback(self, data):
