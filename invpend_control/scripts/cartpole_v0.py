@@ -19,7 +19,7 @@ from gazebo_msgs.msg import LinkState
 from geometry_msgs.msg import Point
 
 def exceedRange(pos_cart, pos_pole):
-    return math.fabs(pos_cart) > 2.4 or math.fabs(pos_pole) > math.pi/12 # cart: +-2.4; pole: +-15degrees
+    return math.fabs(pos_cart) > 2.4 or math.fabs(pos_pole) > math.pi/3 # cart: +-2.4; pole: +-15degrees
 
 class bcolors:
     """ For the purpose of print in terminal with colors """
@@ -39,8 +39,9 @@ class CartPole(object):
     def __init__(self):
         # init topics and services
         self._sub_invpend_states = rospy.Subscriber('/invpend/joint_states', JointState, self.jstates_callback)
-        self._pub_vel_cmd = rospy.Publisher('/invpend/joint1_velocity_controller/command', Float64, queue_size=1)
-        self._pub_set_pole = rospy.Publisher('/gazebo/set_link_state', LinkState, queue_size=1)
+        self._pub_vel_cmd = rospy.Publisher('/invpend/joint1_velocity_controller/command', Float64, queue_size=50)
+        self._pub_set_pole = rospy.Publisher('/gazebo/set_link_state', LinkState, queue_size=50)
+        self._pub_set_cart = rospy.Publisher('/gazebo/set_link_state', LinkState, queue_size=50)
         # init observation parameters
         self.pos_cart = 0
         self.vel_cart = 0
@@ -51,10 +52,17 @@ class CartPole(object):
         # init reset_env parameters
         self.reset_dur = .2 # reset duration, sec
         self.freq = 50 # topics pub and sub frequency, Hz
+        ## pole
         self.PoleState = LinkState()
         self.PoleState.link_name = 'pole'
         self.PoleState.pose.position = Point(0.0, -0.275, 0.0) # pole's position w.r.t. world
-        self.PoleState.reference_frame = 'slidebar'
+        self.PoleState.reference_frame = 'cart'
+        ## cart
+        self.CartState = LinkState()
+        self.CartState.link_name = 'cart'
+        self.CartState.pose.position = Point(0.0, 0.0, 0.0) # pole's position w.r.t. world
+        self.CartState.reference_frame = 'slidebar'
+        # velocity control command
         self.cmd = 0        
 
     def jstates_callback(self, data):
@@ -77,6 +85,7 @@ class CartPole(object):
         while not rospy.is_shutdown() and reset_count < self.reset_dur*self.freq:
             # print("=reset counter: ", str(reset_count)) # debug log
             self._pub_vel_cmd.publish(0)
+            self._pub_set_cart.publish(self.CartState)
             self._pub_set_pole.publish(self.PoleState)
             self.pos_cart = 0
             self.vel_cart = 0

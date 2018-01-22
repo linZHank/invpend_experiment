@@ -3,7 +3,7 @@ import rospy
 import random
 import math
 
-from cartpole import CartPole
+from cartpole_v0 import CartPole
 
 class Testbed(CartPole):
     def __init__(self):
