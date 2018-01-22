@@ -19,7 +19,7 @@ from gazebo_msgs.msg import LinkState
 from geometry_msgs.msg import Point
 
 def exceedRange(pos_cart, pos_pole):
-    return math.fabs(pos_cart) > 2.4 or math.fabs(pos_pole) > math.pi/3 # cart: +-2.4; pole: +-15degrees
+    return math.fabs(pos_cart) > 2.4 or math.fabs(pos_pole) > math.pi/12 # cart: +-2.4; pole: +-15degrees
 
 class bcolors:
     """ For the purpose of print in terminal with colors """
@@ -81,7 +81,7 @@ class CartPole(object):
     def reset_env(self):
         rate = rospy.Rate(self.freq)
         reset_count = 0
-        print(bcolors.WARNING, "\n=== Reset cart-pole to (0, 0, 0, 0) ===\n", bcolors.ENDC)
+        print(bcolors.WARNING, "\n=== Reset cart-pole ===\n", bcolors.ENDC)
         while not rospy.is_shutdown() and reset_count < self.reset_dur*self.freq:
             # print("=reset counter: ", str(reset_count)) # debug log
             self._pub_vel_cmd.publish(0)

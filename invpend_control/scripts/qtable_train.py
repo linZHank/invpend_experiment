@@ -22,7 +22,7 @@ from cartpole_v0 import CartPole, bcolors
 start_time = time.time()
 # Reinforement learning environment related settings
 ## Discrete actions, states and buckets
-ACTIONS = (-5., 0., 5.) # discrete velocity command
+ACTIONS = (-1, 0, 1) # discrete velocity command
 NUM_ACTIONS = len(ACTIONS)
 upper_bound = [2.4, 1, math.pi/12, math.radians(50)]
 lower_bound = [-2.4, -1, -math.pi/12, -math.radians(50)]
@@ -32,7 +32,7 @@ NUM_BUCKETS = (1, 1, 6, 3) # (pos_cart, vel_cart, pos_pole, vel_pole)
 MIN_LEARNING_RATE = 0.1
 MIN_EXPLORE_RATE = 0.01
 ## Simulation related constans
-NUM_EPISODES = 2000
+NUM_EPISODES = 1000
 MAX_STEP = 250
 STREAK_TO_END = 120
 

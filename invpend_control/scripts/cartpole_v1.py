@@ -2,7 +2,7 @@
 
 
 """ Configure a cart-pole system spawned in Gazebo to be a qualified environment for reinforcement learning 
-    Based on cartpole-v0, but increase pole swaying angle limit and modified reward mechanism"""
+    Based on cartpole-v0, but increases pole swaying angle limit and modifies reward mechanism"""
 
 
 from __future__ import print_function
@@ -40,24 +40,32 @@ class CartPole(object):
     def __init__(self):
         # init topics and services
         self._sub_invpend_states = rospy.Subscriber('/invpend/joint_states', JointState, self.jstates_callback)
-        self._pub_vel_cmd = rospy.Publisher('/invpend/joint1_velocity_controller/command', Float64, queue_size=1)
-        self._pub_set_pole = rospy.Publisher('/gazebo/set_link_state', LinkState, queue_size=1)
+        self._pub_vel_cmd = rospy.Publisher('/invpend/joint1_velocity_controller/command', Float64, queue_size=50)
+        self._pub_set_pole = rospy.Publisher('/gazebo/set_link_state', LinkState, queue_size=50)
+        self._pub_set_cart = rospy.Publisher('/gazebo/set_link_state', LinkState, queue_size=50)
         # init observation parameters
         self.pos_cart = 0
         self.vel_cart = 0
         self.pos_pole = 0
         self.vel_pole = 0
-        self.reward = 0.
+        self.reward = 0
         self.out_range = False
         self.reset_stamp = time.time()
         self.time_elapse = 0.
         # init reset_env parameters
         self.reset_dur = .2 # reset duration, sec
         self.freq = 50 # topics pub and sub frequency, Hz
+        ## pole
         self.PoleState = LinkState()
         self.PoleState.link_name = 'pole'
-        self.PoleState.pose.position = Point(0.0, -0.25, 2.0) # pole's position w.r.t. world
-        self.PoleState.reference_frame = 'world'
+        self.PoleState.pose.position = Point(0.0, -0.275, 0.0) # pole's position w.r.t. world
+        self.PoleState.reference_frame = 'cart'
+        ## cart
+        self.CartState = LinkState()
+        self.CartState.link_name = 'cart'
+        self.CartState.pose.position = Point(0.0, 0.0, 0.0) # pole's position w.r.t. world
+        self.CartState.reference_frame = 'slidebar'
+        # velocity control command
         self.cmd = 0        
 
     def jstates_callback(self, data):
@@ -90,6 +98,22 @@ class CartPole(object):
             self.pos_pole = 0
             self.vel_pole = 0
             self.reward = 0.
+            # self.out_range = False
+            reset_count += 1
+            rate.sleep()
+        rate = rospy.Rate(self.freq)
+        reset_count = 0
+        print(bcolors.WARNING, "\n=== Reset cart-pole ===\n", bcolors.ENDC)
+        while not rospy.is_shutdown() and reset_count < self.reset_dur*self.freq:
+            # print("=reset counter: ", str(reset_count)) # debug log
+            self._pub_vel_cmd.publish(0)
+            self._pub_set_cart.publish(self.CartState)
+            self._pub_set_pole.publish(self.PoleState)
+            self.pos_cart = 0
+            self.vel_cart = 0
+            self.pos_pole = 0
+            self.vel_pole = 0
+            self.reward = 0
             # self.out_range = False
             reset_count += 1
             rate.sleep()
