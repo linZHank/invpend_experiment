@@ -26,7 +26,7 @@ All python scripts is located at *`/your/path/to/`*`ros_ws/src/invpend_experimen
 [![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/ZidldNeV2J0/0.jpg)](https://youtu.be/ZidldNeV2J0)
 
 **Rewards Accumulation**
-![alt text](https://raw.githubusercontent.com/linZHank/invpend_experiment/master/invpend_control/scripts/qtable_storage/reward2018-01-17.png =256x256)
+<img src="https://camo.githubusercontent.com/..." data-canonical-src="https://raw.githubusercontent.com/linZHank/invpend_experiment/master/invpend_control/scripts/qtable_storage/reward2018-01-17.png" width="256" heigh="256" />
 
 **Evaluation Demo**
 
