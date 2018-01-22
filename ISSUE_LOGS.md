@@ -21,5 +21,4 @@ rospy.exceptions.ROSTimeMovedBackwardsException: ROS time moved backwards
 Shuting dwon...
 ```
 
-- \[Fixed\] Have to run script immediately after `launch invpend_control load_invpend.launch`, or `reset_env` brings the pole angle to 2*pi, which is totally OK in the real world but may disarm my script's judgement of pole angle out of range.
-  - **Reset pole w.r.t. cart first, then reset cart w.r.t. slidebar**
+- Have to run script immediately after `launch invpend_control load_invpend.launch`, or `reset_env` brings the pole angle to 2*pi, which is totally OK in the real world but may disarm my script's judgement of pole angle out of range.

@@ -22,14 +22,14 @@ from qtable_train import observeToBucket, select_action
 start_time = time.time()
 # Reinforement learning environment related settings
 ## Discrete actions, states and buckets
-ACTIONS = (-5., 0., 5.) # discrete velocity command
+ACTIONS = (-1., 0., 1.) # discrete velocity command
 NUM_ACTIONS = len(ACTIONS)
 upper_bound = [2.4, 1, math.pi/12, math.radians(50)]
 lower_bound = [-2.4, -1, -math.pi/12, -math.radians(50)]
 STATE_BOUNDS = zip(lower_bound, upper_bound)
 NUM_BUCKETS = (1, 1, 6, 3) # (pos_cart, vel_cart, pos_pole, vel_pole)
 ## Simulation related constans
-NUM_EPISODES = 1
+NUM_EPISODES = 10
 MAX_STEP = 2500
 
 def main():
@@ -42,7 +42,7 @@ def main():
     episode = 0
     num_streaks = 0
     # load Q table
-    q_table = np.load('qtable_storage/q_table18-01-17-13-44.npy')
+    q_table = np.load('qtable_storage/q_table18-01-22-12-35.npy')
     # reset environment
     evalip.reset_env()
     # initial joint states

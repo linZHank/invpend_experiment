@@ -80,9 +80,7 @@ class CartPole(object):
         if self.out_range == True:
             self.reward = 0.
         else:
-            self.reward = math.fabs(1./self.pos_pole) + self.time_elapse
-            if self.reward > 5:
-                self.reward = 5
+            self.reward = 0 - math.fabs(self.pos_pole)
 
     def reset_env(self):
         """ Reset cart-pole to initial state"""
