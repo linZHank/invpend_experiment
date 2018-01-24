@@ -16,11 +16,15 @@
 
   <!-- Cart Link -->
   <gazebo reference="cart">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
     <material>Gazebo/Blue</material>
   </gazebo>
 
   <!-- Pole Link -->
   <gazebo reference="pole">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
     <material>Gazebo/Orange</material>
   </gazebo>
 
