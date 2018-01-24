@@ -22,3 +22,4 @@ Shuting dwon...
 ```
 
 - Have to run script immediately after `launch invpend_control load_invpend.launch`, or `reset_env` brings the pole angle to 2*pi, which is totally OK in the real world but may disarm my script's judgement of pole angle out of range.
+- Using settings of [CartPole-v0](https://github.com/openai/gym/blob/master/gym/envs/classic_control/cartpole.py) in openAI gym, mass of cart and pole too small results in slow motion in gazebo simulation.

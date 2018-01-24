@@ -15,7 +15,7 @@
 
 ## Scripts
 All python scripts is located at *`/your/path/to/`*`ros_ws/src/invpend_experiment/invpend_control/scripts`.
-- `cartpole.py` configures the model to be a reinforcement learning ready enviroment.
+- `cartpole_v0.py` and `cartpole_v1` configures the model to be a reinforcement learning ready enviroment.
 - `test_env.py` is a good starting point to familiarize this environment. Currently, sending random command and sinusoidal command to the cart through velocity control are available/
 - `qtable_train.py` runs Q-learning algorithm on the cart-pole, however parameters are undertuned at current stage.
 - `qtable_eval.py` evaluates the Q table learned by `qtable_train.py`
@@ -26,7 +26,7 @@ All python scripts is located at *`/your/path/to/`*`ros_ws/src/invpend_experimen
 [![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/ZidldNeV2J0/0.jpg)](https://youtu.be/ZidldNeV2J0)
 
 **Rewards Accumulation**
-<img src="https://camo.githubusercontent.com/..." data-canonical-src="https://raw.githubusercontent.com/linZHank/invpend_experiment/master/invpend_control/scripts/qtable_storage/reward2018-01-17.png" width="256" heigh="256" />
+![Accumulated Rewards](https://raw.githubusercontent.com/linZHank/invpend_experiment/master/invpend_control/scripts/qtable_storage/reward2018-01-17.png)
 
 **Evaluation Demo**
 
