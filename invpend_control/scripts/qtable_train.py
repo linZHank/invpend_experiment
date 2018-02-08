@@ -22,7 +22,7 @@ from cartpole_v0 import CartPole, bcolors
 start_time = time.time()
 # Reinforement learning environment related settings
 ## Discrete actions, states and buckets
-ACTIONS = (-1, 0, 1) # discrete velocity command
+ACTIONS = (-200, 0, 200) # discrete force command
 NUM_ACTIONS = len(ACTIONS)
 upper_bound = [2.4, 1, math.pi/12, math.radians(50)]
 lower_bound = [-2.4, -1, -math.pi/12, -math.radians(50)]

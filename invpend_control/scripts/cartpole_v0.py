@@ -18,6 +18,19 @@ from std_srvs.srv import Empty
 from gazebo_msgs.msg import LinkState
 from geometry_msgs.msg import Point
 
+# Simulation geometry
+""" The geometry of the cart pole should be coincide with urdf in invpend_description"""
+MASS_SLIDER = 100
+MASS_CART = 20
+MASS_POLE = 2
+WIDTH = 0.25
+HEIGHT = 0.125
+DEPTH = 0.25
+LENGTH_SLIDER = 5
+LENGTH_POLE = 0.5
+RADIUS = 0.01
+RADIUS_POLE = 0.025
+
 def exceedRange(pos_cart, pos_pole):
     return math.fabs(pos_cart) > 2.4 or math.fabs(pos_pole) > math.pi/12 # cart: +-2.4; pole: +-15degrees
 
@@ -55,7 +68,7 @@ class CartPole(object):
         ## pole
         self.PoleState = LinkState()
         self.PoleState.link_name = 'pole'
-        self.PoleState.pose.position = Point(0.0, -0.275, 0.0) # pole's position w.r.t. world
+        self.PoleState.pose.position = Point(0.0, -DEPTH/2-RADIUS-RADIUS_POLE/2, HEIGHT/4) # pole's position w.r.t. cart
         self.PoleState.reference_frame = 'cart'
         ## cart
         self.CartState = LinkState()
